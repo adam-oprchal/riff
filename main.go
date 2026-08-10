@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/adam-oprchal/riff/lexer"
 )
 
 func main() {
@@ -13,6 +15,8 @@ func main() {
 	for {
 		line, _ := reader.ReadString('\n')
 
-		fmt.Print(line)
+		tokens := lexer.Lex(line)
+
+		fmt.Println("Tokens in line:", tokens)
 	}
 }
