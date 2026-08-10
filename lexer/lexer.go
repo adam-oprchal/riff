@@ -2,7 +2,19 @@ package lexer
 
 import "strings"
 
-func Lex(input string) []string {
+type Token struct {
+	value string
+}
 
-	return strings.Fields(input)
+func Lex(input string) []Token {
+
+	tokens := []Token{}
+
+	splitInput := strings.Fields(input)
+
+	for _, value := range splitInput {
+		tokens = append(tokens, Token{value})
+	}
+
+	return tokens
 }
