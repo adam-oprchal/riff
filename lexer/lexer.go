@@ -1,12 +1,16 @@
 package lexer
 
-import "strings"
+import (
+	"slices"
+	"strings"
+)
 
 type TokenCategory string
 
 const (
-	Pitch = "PITCH"
-	Other = "OTHER"
+	Pitch    = "PITCH"
+	Duration = "DURATION"
+	Other    = "OTHER"
 )
 
 type Token struct {
@@ -21,6 +25,11 @@ func lexWord(word string) Token {
 		('0' <= word[1]) && (word[1] <= '9') {
 
 		return Token{Pitch, word}
+	}
+
+	possible_durations := []string{"whole", "half", "quarter", "eighth", "sixteenth"}
+	if slices.Contains(possible_durations, word) {
+		return Token{Duration, word}
 	}
 
 	return Token{Other, word}
