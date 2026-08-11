@@ -10,6 +10,7 @@ type TokenCategory string
 const (
 	Pitch    = "PITCH"
 	Duration = "DURATION"
+	Tempo    = "TEMPO"
 	Other    = "OTHER"
 )
 
@@ -30,6 +31,10 @@ func lexWord(word string) Token {
 	possible_durations := []string{"whole", "half", "quarter", "eighth", "sixteenth"}
 	if slices.Contains(possible_durations, word) {
 		return Token{Duration, word}
+	}
+
+	if word == "tempo" {
+		return Token{Tempo, word}
 	}
 
 	return Token{Other, word}
