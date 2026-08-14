@@ -13,9 +13,19 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		line, _ := reader.ReadString('\n')
+		line, err := reader.ReadString('\n')
 
-		tokens := lexer.Lex(line)
+		if err != nil {
+			fmt.Println("Error: cannot read input")
+			return
+		}
+
+		tokens, err := lexer.Lex(line)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
 		fmt.Println("Tokens in line:", tokens)
 	}
