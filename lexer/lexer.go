@@ -8,15 +8,27 @@ import (
 type TokenCategory string
 
 const (
-	Pitch    = "PITCH"
-	Duration = "DURATION"
-	Tempo    = "TEMPO"
-	Other    = "OTHER"
+	Pitch         = "PITCH"
+	Duration      = "DURATION"
+	Tempo         = "TEMPO"
+	NaturalNumber = "NATURALNUMBER"
+	Other         = "OTHER"
 )
 
 type Token struct {
 	category TokenCategory
 	value    string
+}
+
+func isNaturalNumber(word string) bool {
+
+	for _, char := range word {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+
+	return word[0] != '0'
 }
 
 func lexWord(word string) Token {
@@ -35,6 +47,10 @@ func lexWord(word string) Token {
 
 	if word == "tempo" {
 		return Token{Tempo, word}
+	}
+
+	if isNaturalNumber(word) {
+		return Token{NaturalNumber, word}
 	}
 
 	return Token{Other, word}
