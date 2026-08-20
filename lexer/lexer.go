@@ -16,8 +16,8 @@ const (
 )
 
 type Token struct {
-	category TokenCategory
-	value    string
+	Category TokenCategory
+	Value    string
 }
 
 func isNaturalNumber(word string) bool {
