@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/adam-oprchal/riff/lexer"
+	"github.com/adam-oprchal/riff/midi"
 	"github.com/adam-oprchal/riff/parser"
 )
 
@@ -38,5 +39,7 @@ func main() {
 		}
 
 		fmt.Println("Parsed program:", program)
+
+		midi.PlayProgram(program)
 	}
 }
