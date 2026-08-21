@@ -26,15 +26,29 @@ func PlayProgram(program parser.Program) {
 	}
 
 	// create a SMF
-	rd := bytes.NewReader(mkSMF())
+	rd := bytes.NewReader(mkSMF(program))
 
 	// read and play it
 	smf.ReadTracksFrom(rd).Play(out)
 
 }
 
+var naturalNotes = map[byte]int{
+	'C': 0,
+	'D': 2,
+	'E': 4,
+	'F': 5,
+	'G': 7,
+	'A': 9,
+	'B': 11,
+}
+
+func getMIDINote(note parser.Note) midi.Note {
+	return midi.Note(naturalNotes[note.Pitch.Letter] + note.Pitch.Octave*12)
+}
+
 // makes a SMF and returns the bytes
-func mkSMF() []byte {
+func mkSMF(program parser.Program) []byte {
 	var (
 		bf    bytes.Buffer
 		clock = smf.MetricTicks(96) // resolution: 96 ticks per quarternote 960 is also common
@@ -48,40 +62,15 @@ func mkSMF() []byte {
 
 	tr.Add(0, midi.ProgramChange(0, gm.Instr_AcousticGuitarSteel.Value()))
 
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
+	for _, e := range program.Events {
 
-	tr.Add(clock.Ticks4th(), midi.D(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.C(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.D(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-	tr.Add(0, midi.E(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.D(5).NoteOn(0, 120))
-	tr.Add(0, midi.D(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.C(5).NoteOn(0, 120))
-	tr.Add(0, midi.C(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.D(5).NoteOn(0, 120))
-	tr.Add(0, midi.D(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-	tr.Add(0, midi.E(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-	tr.Add(0, midi.E(5).NoteOff(0))
-
-	tr.Add(clock.Ticks4th(), midi.E(5).NoteOn(0, 120))
-	tr.Add(0, midi.E(5).NoteOff(0))
+		switch event := e.(type) {
+		case parser.Note:
+			tr.Add(clock.Ticks4th(), getMIDINote(event).NoteOn(0, 120))
+			tr.Add(0, getMIDINote(event).NoteOff(0))
+		case parser.TempoChange:
+		}
+	}
 
 	tr.Close(0)
 

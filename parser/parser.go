@@ -8,8 +8,8 @@ import (
 )
 
 type Pitch struct {
-	letter byte
-	octave int
+	Letter byte
+	Octave int
 }
 
 type Duration string
@@ -19,7 +19,7 @@ type Event interface {
 }
 
 type Note struct {
-	pitch    Pitch
+	Pitch    Pitch
 	duration Duration
 }
 
@@ -32,7 +32,7 @@ type TempoChange struct {
 func (TempoChange) isEvent() {}
 
 type Program struct {
-	events []Event
+	Events []Event
 }
 
 func parseNote(tokens []lexer.Token, events *[]Event, curTokenIndex *int) {
