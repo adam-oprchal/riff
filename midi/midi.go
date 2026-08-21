@@ -17,7 +17,7 @@ func PlayProgram(program parser.Program) {
 
 	defer midi.CloseDriver()
 
-	fmt.Println("out ports: \n" + midi.GetOutPorts().String())
+	//fmt.Println("out ports: \n" + midi.GetOutPorts().String())
 
 	out, err := midi.FindOutPort("FLUID Synth")
 	if err != nil {

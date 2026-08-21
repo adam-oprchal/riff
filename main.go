@@ -15,6 +15,9 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
+
+		fmt.Print("riff> ")
+
 		line, err := reader.ReadString('\n')
 
 		if err != nil {
@@ -29,7 +32,7 @@ func main() {
 			return
 		}
 
-		fmt.Println("Tokens in line:", tokens)
+		//fmt.Println("Tokens in line:", tokens)
 
 		program, err := parser.Parse(tokens)
 
@@ -38,7 +41,9 @@ func main() {
 			return
 		}
 
-		fmt.Println("Parsed program:", program)
+		//fmt.Println("Parsed program:", program)
+
+		fmt.Println("Playing... 🎶")
 
 		midi.PlayProgram(program)
 	}
