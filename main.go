@@ -38,6 +38,10 @@ func main() {
 			return
 		}
 
+		if len(tokens) == 0 {
+			continue
+		}
+
 		//fmt.Println("Tokens in line:", tokens)
 
 		program, err := parser.Parse(tokens)
