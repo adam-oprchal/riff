@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/adam-oprchal/riff/lexer"
@@ -19,6 +20,11 @@ func main() {
 		fmt.Print("riff> ")
 
 		line, err := reader.ReadString('\n')
+
+		if err == io.EOF {
+			fmt.Println("")
+			return
+		}
 
 		if err != nil {
 			fmt.Println("Error: cannot read input")
