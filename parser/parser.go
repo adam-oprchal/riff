@@ -20,7 +20,7 @@ type Event interface {
 
 type Note struct {
 	Pitch    Pitch
-	duration Duration
+	Duration Duration
 }
 
 func (Note) isEvent() {}

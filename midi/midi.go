@@ -43,6 +43,24 @@ var naturalNotes = map[byte]int{
 	'B': 11,
 }
 
+func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
+
+	switch duration {
+	case "whole":
+		return clock.Ticks4th() * 4
+	case "half":
+		return clock.Ticks4th() * 2
+	case "quarter":
+		return clock.Ticks4th()
+	case "eighth":
+		return clock.Ticks8th()
+	case "sixteenth":
+		return clock.Ticks16th()
+	default:
+		return 0
+	}
+}
+
 func getMIDINote(note parser.Note) midi.Note {
 	return midi.Note(naturalNotes[note.Pitch.Letter] + note.Pitch.Octave*12)
 }
@@ -56,7 +74,7 @@ func mkSMF(program parser.Program) []byte {
 	)
 
 	// first track must have tempo and meter informations
-	tr.Add(0, smf.MetaMeter(3, 4))
+	tr.Add(0, smf.MetaMeter(4, 4))
 	tr.Add(0, smf.MetaTempo(140))
 	tr.Add(0, smf.MetaInstrument("Guitar"))
 
@@ -66,8 +84,11 @@ func mkSMF(program parser.Program) []byte {
 
 		switch event := e.(type) {
 		case parser.Note:
-			tr.Add(clock.Ticks4th(), getMIDINote(event).NoteOn(0, 120))
-			tr.Add(0, getMIDINote(event).NoteOff(0))
+
+			midiNote := getMIDINote(event)
+
+			tr.Add(0, midiNote.NoteOn(0, 120))
+			tr.Add(getDurationTicks(event.Duration, clock), midiNote.NoteOff(0))
 		case parser.TempoChange:
 		}
 	}
