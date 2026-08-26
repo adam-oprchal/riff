@@ -28,7 +28,7 @@ func PlayProgram(program parser.Program) error {
 	rd := bytes.NewReader(mkSMF(program))
 
 	// read and play it
-	smf.ReadTracksFrom(rd).Play(out)
+	go smf.ReadTracksFrom(rd).Play(out)
 
 	return nil
 }
