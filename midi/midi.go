@@ -84,12 +84,12 @@ func mkSMF(program parser.Program) []byte {
 
 		switch event := e.(type) {
 		case parser.Note:
-
 			midiNote := getMIDINote(event)
 
 			tr.Add(0, midiNote.NoteOn(0, 120))
 			tr.Add(getDurationTicks(event.Duration, clock), midiNote.NoteOff(0))
 		case parser.TempoChange:
+			tr.Add(0, smf.MetaTempo(float64(event.Value)))
 		}
 	}
 

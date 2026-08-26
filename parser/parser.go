@@ -26,7 +26,7 @@ type Note struct {
 func (Note) isEvent() {}
 
 type TempoChange struct {
-	value int
+	Value int
 }
 
 func (TempoChange) isEvent() {}
