@@ -11,7 +11,7 @@ import (
 	"github.com/adam-oprchal/riff/parser"
 )
 
-func main() {
+func runREPL() {
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -61,5 +61,40 @@ func main() {
 			fmt.Println(err)
 			return
 		}
+	}
+}
+
+func readAndCompileFile(input string, output string) {
+	fmt.Println("Compling " + input + " to " + output)
+}
+
+var logo = `      _  __  __ 
+ _ __(_)/ _|/ _|
+| '__| | |_| |_ 
+| |  | |  _|  _|
+|_|  |_|_| |_|  `
+
+func writeHelpMessage() {
+
+	fmt.Println(logo)
+
+	fmt.Println()
+	fmt.Println("Usage:")
+	fmt.Println()
+
+	fmt.Printf("     %-35s %s\n", "riff <input-file> <output-file>", "compile <input-file> into a <output-file> midi file")
+	fmt.Printf("     %-35s %s\n", "riff repl", "run an interactive REPL playing sounds in real time with FluidSynth")
+
+	fmt.Println()
+}
+
+func main() {
+
+	if len(os.Args) == 2 && os.Args[1] == "repl" {
+		runREPL()
+	} else if len(os.Args) == 3 {
+		readAndCompileFile(os.Args[1], os.Args[2])
+	} else {
+		writeHelpMessage()
 	}
 }
