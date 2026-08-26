@@ -55,6 +55,11 @@ func main() {
 
 		fmt.Println("Playing... 🎶")
 
-		midi.PlayProgram(program)
+		err = midi.PlayProgram(program)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 }

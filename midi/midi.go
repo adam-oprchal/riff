@@ -2,7 +2,7 @@ package midi
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 
 	"github.com/adam-oprchal/riff/parser"
 
@@ -13,7 +13,7 @@ import (
 	_ "gitlab.com/gomidi/midi/v2/drivers/rtmididrv"
 )
 
-func PlayProgram(program parser.Program) {
+func PlayProgram(program parser.Program) error {
 
 	defer midi.CloseDriver()
 
@@ -21,8 +21,7 @@ func PlayProgram(program parser.Program) {
 
 	out, err := midi.FindOutPort("FLUID Synth")
 	if err != nil {
-		fmt.Printf("can't find fluidsynth")
-		return
+		return errors.New("Error: can't find fluidsynth")
 	}
 
 	// create a SMF
@@ -31,6 +30,7 @@ func PlayProgram(program parser.Program) {
 	// read and play it
 	smf.ReadTracksFrom(rd).Play(out)
 
+	return nil
 }
 
 var naturalNotes = map[byte]int{
