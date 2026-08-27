@@ -64,8 +64,29 @@ func runREPL() {
 	}
 }
 
-func readAndCompileFile(input string, output string) {
-	fmt.Println("Compling " + input + " to " + output)
+func readAndCompileFile(inputFile string, outputFile string) {
+
+	input, err := os.ReadFile(inputFile)
+	if err != nil {
+		fmt.Println("Error: cannot read input file")
+		return
+	}
+
+	tokens, err := lexer.Lex(string(input))
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	program, err := parser.Parse(tokens)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(program)
 }
 
 var logo = `      _  __  __ 
