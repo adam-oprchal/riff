@@ -3,6 +3,7 @@ package midi
 import (
 	"bytes"
 	"errors"
+	"os"
 
 	"github.com/adam-oprchal/riff/parser"
 
@@ -12,6 +13,16 @@ import (
 
 	_ "gitlab.com/gomidi/midi/v2/drivers/rtmididrv"
 )
+
+func SaveProgram(program parser.Program, outputFile string) error {
+
+	err := os.WriteFile(outputFile, mkSMF(program), 0644)
+	if err != nil {
+		return errors.New("Error: failed to save MIDI file")
+	}
+
+	return nil
+}
 
 func PlayProgram(program parser.Program) error {
 

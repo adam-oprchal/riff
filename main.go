@@ -86,7 +86,12 @@ func readAndCompileFile(inputFile string, outputFile string) {
 		return
 	}
 
-	fmt.Println(program)
+	err = midi.SaveProgram(program, outputFile)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 var logo = `      _  __  __ 
