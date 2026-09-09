@@ -31,6 +31,13 @@ type TempoChange struct {
 
 func (TempoChange) isEvent() {}
 
+type Chord struct {
+	Pitches  []Pitch
+	Duration Duration
+}
+
+func (Chord) isEvent() {}
+
 type Program struct {
 	Events []Event
 }
@@ -71,6 +78,41 @@ func parseTempo(tokens []lexer.Token, events *[]Event, curTokenIndex *int) error
 	return nil
 }
 
+func parseChord(tokens []lexer.Token, events *[]Event, curTokenIndex *int) error {
+
+	*curTokenIndex++
+
+	pitches := []Pitch{}
+
+	for *curTokenIndex < len(tokens) && tokens[*curTokenIndex].Category == lexer.Pitch {
+
+		pitchLetter := tokens[*curTokenIndex].Value[0]
+		pitchOctave := tokens[*curTokenIndex].Value[1] - '0'
+
+		newPitch := Pitch{pitchLetter, int(pitchOctave)}
+		pitches = append(pitches, newPitch)
+
+		*curTokenIndex++
+	}
+
+	if *curTokenIndex >= len(tokens) || tokens[*curTokenIndex].Category != lexer.CloseChord {
+		return errors.New("Error: expected CloseChord after OpenChord/Pitch")
+	}
+
+	*curTokenIndex++
+
+	if *curTokenIndex >= len(tokens) || tokens[*curTokenIndex].Category != lexer.Duration {
+		*events = append(*events, Chord{pitches, "whole"})
+		return nil
+	}
+
+	*events = append(*events, Chord{pitches, Duration(tokens[*curTokenIndex].Value)})
+
+	*curTokenIndex++
+
+	return nil
+}
+
 func Parse(tokens []lexer.Token) (Program, error) {
 
 	events := []Event{}
@@ -85,6 +127,11 @@ func Parse(tokens []lexer.Token) (Program, error) {
 			parseNote(tokens, &events, &curTokenIndex)
 		case lexer.Tempo:
 			err := parseTempo(tokens, &events, &curTokenIndex)
+			if err != nil {
+				return Program{}, err
+			}
+		case lexer.OpenChord:
+			err := parseChord(tokens, &events, &curTokenIndex)
 			if err != nil {
 				return Program{}, err
 			}

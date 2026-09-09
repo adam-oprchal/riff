@@ -72,8 +72,28 @@ func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
 	}
 }
 
-func getMIDINote(note parser.Note) midi.Note {
-	return midi.Note(naturalNotes[note.Pitch.Letter] + note.Pitch.Octave*12)
+func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks) {
+
+	for _, p := range chord.Pitches {
+
+		midiNote := getMIDINote(p)
+		tr.Add(0, midiNote.NoteOn(0, 120))
+	}
+
+	if len(chord.Pitches) > 0 {
+		midiNote := getMIDINote(chord.Pitches[0])
+		tr.Add(getDurationTicks(chord.Duration, clock), midiNote.NoteOff(0))
+	}
+
+	for _, p := range chord.Pitches[1:] {
+
+		midiNote := getMIDINote(p)
+		tr.Add(0, midiNote.NoteOff(0))
+	}
+}
+
+func getMIDINote(note parser.Pitch) midi.Note {
+	return midi.Note(naturalNotes[note.Letter] + note.Octave*12)
 }
 
 // makes a SMF and returns the bytes
@@ -95,12 +115,14 @@ func mkSMF(program parser.Program) []byte {
 
 		switch event := e.(type) {
 		case parser.Note:
-			midiNote := getMIDINote(event)
+			midiNote := getMIDINote(event.Pitch)
 
 			tr.Add(0, midiNote.NoteOn(0, 120))
 			tr.Add(getDurationTicks(event.Duration, clock), midiNote.NoteOff(0))
 		case parser.TempoChange:
 			tr.Add(0, smf.MetaTempo(float64(event.Value)))
+		case parser.Chord:
+			playChord(event, &tr, clock)
 		}
 	}
 

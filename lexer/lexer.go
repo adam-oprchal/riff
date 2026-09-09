@@ -13,6 +13,8 @@ const (
 	Duration      = "DURATION"
 	Tempo         = "TEMPO"
 	NaturalNumber = "NATURALNUMBER"
+	OpenChord     = "OPENCHORD"
+	CloseChord    = "CLOSECHORD"
 )
 
 type Token struct {
@@ -51,6 +53,14 @@ func lexWord(word string) (Token, error) {
 
 	if isNaturalNumber(word) {
 		return Token{NaturalNumber, word}, nil
+	}
+
+	if word == "[" {
+		return Token{OpenChord, word}, nil
+	}
+
+	if word == "]" {
+		return Token{CloseChord, word}, nil
 	}
 
 	return Token{}, errors.New("Error: unknown TokenCategory for \"" + word + "\"")
