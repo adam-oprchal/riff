@@ -70,7 +70,12 @@ func Lex(input string) ([]Token, error) {
 
 	tokens := []Token{}
 
-	splitInput := strings.Fields(input)
+	replacer := strings.NewReplacer(
+		"[", " [ ",
+		"]", " ] ",
+	)
+
+	splitInput := strings.Fields(replacer.Replace(input))
 
 	for _, word := range splitInput {
 
