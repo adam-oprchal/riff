@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/adam-oprchal/riff/music"
 	"github.com/adam-oprchal/riff/parser"
 
 	"gitlab.com/gomidi/midi/v2"
@@ -42,16 +43,6 @@ func PlayProgram(program parser.Program) error {
 	go smf.ReadTracksFrom(rd).Play(out)
 
 	return nil
-}
-
-var naturalNotes = map[byte]int{
-	'C': 0,
-	'D': 2,
-	'E': 4,
-	'F': 5,
-	'G': 7,
-	'A': 9,
-	'B': 11,
 }
 
 func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
@@ -93,7 +84,7 @@ func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks) {
 }
 
 func getMIDINote(note parser.Pitch) midi.Note {
-	return midi.Note(naturalNotes[note.Letter] + note.Octave*12)
+	return midi.Note(music.GetPitchValue(note.Name) + note.Octave*12)
 }
 
 // makes a SMF and returns the bytes

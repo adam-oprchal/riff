@@ -8,7 +8,7 @@ import (
 )
 
 type Pitch struct {
-	Letter byte
+	Name   string
 	Octave int
 }
 
@@ -44,10 +44,11 @@ type Program struct {
 
 func parseNote(tokens []lexer.Token, events *[]Event, curTokenIndex *int) {
 
-	pitchLetter := tokens[*curTokenIndex].Value[0]
-	pitchOctave := tokens[*curTokenIndex].Value[1] - '0'
+	curToken := tokens[*curTokenIndex]
+	pitchName := curToken.Value[0 : len(curToken.Value)-1]
+	pitchOctave := curToken.Value[len(curToken.Value)-1] - '0'
 
-	newPitch := Pitch{pitchLetter, int(pitchOctave)}
+	newPitch := Pitch{pitchName, int(pitchOctave)}
 
 	*curTokenIndex++
 
@@ -86,10 +87,11 @@ func parseChord(tokens []lexer.Token, events *[]Event, curTokenIndex *int) error
 
 	for *curTokenIndex < len(tokens) && tokens[*curTokenIndex].Category == lexer.Pitch {
 
-		pitchLetter := tokens[*curTokenIndex].Value[0]
-		pitchOctave := tokens[*curTokenIndex].Value[1] - '0'
+		curToken := tokens[*curTokenIndex]
+		pitchName := curToken.Value[0 : len(curToken.Value)-1]
+		pitchOctave := curToken.Value[len(curToken.Value)-1] - '0'
 
-		newPitch := Pitch{pitchLetter, int(pitchOctave)}
+		newPitch := Pitch{pitchName, int(pitchOctave)}
 		pitches = append(pitches, newPitch)
 
 		*curTokenIndex++
