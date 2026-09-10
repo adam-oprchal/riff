@@ -85,7 +85,7 @@ func lexWord(word string) (Token, error) {
 		return Token{CloseChord, word}, nil
 	}
 
-	return Token{}, errors.New("Error: unknown TokenCategory for \"" + word + "\"")
+	return Token{}, errors.New("Error: unknown input \"" + word + "\"")
 }
 
 func Lex(input string) ([]Token, error) {
