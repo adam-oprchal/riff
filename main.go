@@ -42,16 +42,12 @@ func runREPL() {
 			continue
 		}
 
-		//fmt.Println("Tokens in line:", tokens)
-
 		program, err := parser.Parse(tokens)
 
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-
-		//fmt.Println("Parsed program:", program)
 
 		err, isEmpty := midi.PlayProgram(program)
 
