@@ -35,32 +35,9 @@ func isNaturalNumber(word string) bool {
 	return word[0] != '0'
 }
 
-func isPitch(word string) bool {
-	if len(word) != 2 && len(word) != 3 {
-		return false
-	}
-
-	_, exists := music.NaturalPitches[word[0]]
-	if !exists {
-		return false
-	}
-
-	if len(word) == 3 && word[1] != music.Flat && word[1] != music.Sharp {
-		return false
-	}
-
-	octave := word[len(word)-1]
-
-	if octave > music.MaxOctave || octave < music.MinOctave {
-		return false
-	}
-
-	return true
-}
-
 func lexWord(word string) (Token, error) {
 
-	if isPitch(word) {
+	if music.IsPitch(word) {
 		return Token{Pitch, word}, nil
 	}
 
