@@ -38,14 +38,19 @@ func IsPitch(word string) bool {
 	return true
 }
 
-func GetPitchValue(noteName string) int {
-	if len(noteName) == 1 {
-		return NaturalPitches[noteName[0]]
+// GetPitchValue(name) assumes IsPitch(name) is true
+func GetPitchValue(name string) int {
+
+	nameWithoutOctave := name[0 : len(name)-1]
+	octave := int(name[len(name)-1] - '0')
+
+	if len(nameWithoutOctave) == 1 {
+		return NaturalPitches[nameWithoutOctave[0]] + octave*12
 	}
 
-	if noteName[1] == Sharp {
-		return NaturalPitches[noteName[0]] + 1
+	if nameWithoutOctave[1] == Sharp {
+		return NaturalPitches[nameWithoutOctave[0]] + 1 + octave*12
 	}
 
-	return NaturalPitches[noteName[0]] - 1
+	return NaturalPitches[nameWithoutOctave[0]] - 1 + octave*12
 }

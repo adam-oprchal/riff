@@ -94,7 +94,7 @@ func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks, isEmpty
 }
 
 func getMIDINote(note parser.Pitch) midi.Note {
-	return midi.Note(music.GetPitchValue(note.Name) + note.Octave*12)
+	return midi.Note(music.GetPitchValue(note.Name))
 }
 
 // makes a SMF and returns the bytes
