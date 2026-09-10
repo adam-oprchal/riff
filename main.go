@@ -53,13 +53,15 @@ func runREPL() {
 
 		//fmt.Println("Parsed program:", program)
 
-		fmt.Println("Playing... 🎶")
-
-		err = midi.PlayProgram(program)
+		err, isEmpty := midi.PlayProgram(program)
 
 		if err != nil {
 			fmt.Println(err)
 			return
+		}
+
+		if !isEmpty {
+			fmt.Println("Playing... 🎶")
 		}
 	}
 }

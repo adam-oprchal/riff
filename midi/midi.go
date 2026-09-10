@@ -17,7 +17,9 @@ import (
 
 func SaveProgram(program parser.Program, outputFile string) error {
 
-	err := os.WriteFile(outputFile, mkSMF(program), 0644)
+	smfBytes, _ := mkSMF(program)
+
+	err := os.WriteFile(outputFile, smfBytes, 0644)
 	if err != nil {
 		return errors.New("Error: failed to save MIDI file")
 	}
@@ -25,7 +27,7 @@ func SaveProgram(program parser.Program, outputFile string) error {
 	return nil
 }
 
-func PlayProgram(program parser.Program) error {
+func PlayProgram(program parser.Program) (error, bool) {
 
 	defer midi.CloseDriver()
 
@@ -33,16 +35,20 @@ func PlayProgram(program parser.Program) error {
 
 	out, err := midi.FindOutPort("FLUID Synth")
 	if err != nil {
-		return errors.New("Error: can't find fluidsynth")
+		return errors.New("Error: can't find fluidsynth"), true
 	}
 
 	// create a SMF
-	rd := bytes.NewReader(mkSMF(program))
+	smfBytes, isEmpty := mkSMF(program)
 
-	// read and play it
-	go smf.ReadTracksFrom(rd).Play(out)
+	if !isEmpty {
+		rd := bytes.NewReader(smfBytes)
 
-	return nil
+		// read and play it
+		go smf.ReadTracksFrom(rd).Play(out)
+	}
+
+	return nil, isEmpty
 }
 
 func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
@@ -63,11 +69,13 @@ func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
 	}
 }
 
-func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks) {
+func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks, isEmpty *bool) {
 
 	if len(chord.Pitches) == 0 {
 		return
 	}
+
+	*isEmpty = false
 
 	for _, p := range chord.Pitches {
 
@@ -90,12 +98,14 @@ func getMIDINote(note parser.Pitch) midi.Note {
 }
 
 // makes a SMF and returns the bytes
-func mkSMF(program parser.Program) []byte {
+func mkSMF(program parser.Program) ([]byte, bool) {
 	var (
 		bf    bytes.Buffer
 		clock = smf.MetricTicks(96) // resolution: 96 ticks per quarternote 960 is also common
 		tr    smf.Track
 	)
+
+	isEmpty := true
 
 	// first track must have tempo and meter informations
 	tr.Add(0, smf.MetaMeter(4, 4))
@@ -112,10 +122,11 @@ func mkSMF(program parser.Program) []byte {
 
 			tr.Add(0, midiNote.NoteOn(0, 120))
 			tr.Add(getDurationTicks(event.Duration, clock), midiNote.NoteOff(0))
+			isEmpty = false
 		case parser.TempoChange:
 			tr.Add(0, smf.MetaTempo(float64(event.Value)))
 		case parser.Chord:
-			playChord(event, &tr, clock)
+			playChord(event, &tr, clock, &isEmpty)
 		}
 	}
 
@@ -126,5 +137,5 @@ func mkSMF(program parser.Program) []byte {
 	s.TimeFormat = clock
 	s.Add(tr)
 	s.WriteTo(&bf)
-	return bf.Bytes()
+	return bf.Bytes(), isEmpty
 }
