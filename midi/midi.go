@@ -65,16 +65,18 @@ func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
 
 func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks) {
 
+	if len(chord.Pitches) == 0 {
+		return
+	}
+
 	for _, p := range chord.Pitches {
 
 		midiNote := getMIDINote(p)
 		tr.Add(0, midiNote.NoteOn(0, 120))
 	}
 
-	if len(chord.Pitches) > 0 {
-		midiNote := getMIDINote(chord.Pitches[0])
-		tr.Add(getDurationTicks(chord.Duration, clock), midiNote.NoteOff(0))
-	}
+	midiNote := getMIDINote(chord.Pitches[0])
+	tr.Add(getDurationTicks(chord.Duration, clock), midiNote.NoteOff(0))
 
 	for _, p := range chord.Pitches[1:] {
 
