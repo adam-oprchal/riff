@@ -11,15 +11,13 @@ type Pitch struct {
 	Name string
 }
 
-type Duration string
-
 type Event interface {
 	isEvent()
 }
 
 type Note struct {
 	Pitch    Pitch
-	Duration Duration
+	Duration string
 }
 
 func (Note) isEvent() {}
@@ -32,7 +30,7 @@ func (TempoChange) isEvent() {}
 
 type Chord struct {
 	Pitches  []Pitch
-	Duration Duration
+	Duration string
 }
 
 func (Chord) isEvent() {}
@@ -52,7 +50,7 @@ func parseNote(tokens []lexer.Token, events *[]Event, curTokenIndex *int) {
 		return
 	}
 
-	*events = append(*events, Note{newPitch, Duration(tokens[*curTokenIndex].Value)})
+	*events = append(*events, Note{newPitch, tokens[*curTokenIndex].Value})
 
 	*curTokenIndex++
 }
@@ -99,7 +97,7 @@ func parseChord(tokens []lexer.Token, events *[]Event, curTokenIndex *int) error
 		return nil
 	}
 
-	*events = append(*events, Chord{pitches, Duration(tokens[*curTokenIndex].Value)})
+	*events = append(*events, Chord{pitches, tokens[*curTokenIndex].Value})
 
 	*curTokenIndex++
 

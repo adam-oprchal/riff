@@ -67,3 +67,8 @@ func IsDuration(word string) bool {
 	_, exists := durations[word]
 	return exists
 }
+
+// GetDurationValue(duration) assumes IsDuration(duration) is true
+func GetDurationValue(duration string) float64 {
+	return 1 / float64(durations[duration])
+}

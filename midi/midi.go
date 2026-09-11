@@ -3,6 +3,7 @@ package midi
 import (
 	"bytes"
 	"errors"
+	"math"
 	"os"
 
 	"github.com/adam-oprchal/riff/music"
@@ -51,22 +52,8 @@ func PlayProgram(program parser.Program) (error, bool) {
 	return nil, isEmpty
 }
 
-func getDurationTicks(duration parser.Duration, clock smf.MetricTicks) uint32 {
-
-	switch duration {
-	case "whole":
-		return clock.Ticks4th() * 4
-	case "half":
-		return clock.Ticks4th() * 2
-	case "quarter":
-		return clock.Ticks4th()
-	case "eighth":
-		return clock.Ticks8th()
-	case "sixteenth":
-		return clock.Ticks16th()
-	default:
-		return 0
-	}
+func getDurationTicks(duration string, clock smf.MetricTicks) uint32 {
+	return uint32(math.Round(float64(clock.Ticks4th()) * 4 * music.GetDurationValue(duration)))
 }
 
 func playChord(chord parser.Chord, tr *smf.Track, clock smf.MetricTicks, isEmpty *bool) {
