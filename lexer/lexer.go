@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"errors"
-	"slices"
 	"strings"
 
 	"github.com/adam-oprchal/riff/music"
@@ -41,8 +40,7 @@ func lexWord(word string) (Token, error) {
 		return Token{Pitch, word}, nil
 	}
 
-	possible_durations := []string{"whole", "half", "quarter", "eighth", "sixteenth"}
-	if slices.Contains(possible_durations, word) {
+	if music.IsDuration(word) {
 		return Token{Duration, word}, nil
 	}
 

@@ -10,6 +10,14 @@ var naturalPitches = map[byte]int{
 	'B': 11,
 }
 
+var durations = map[string]int{
+	"whole":     1,
+	"half":      2,
+	"quarter":   4,
+	"eighth":    8,
+	"sixteenth": 16,
+}
+
 const sharp = '#'
 const flat = 'b'
 const minOctave = '0'
@@ -53,4 +61,9 @@ func GetPitchValue(name string) int {
 	}
 
 	return naturalPitches[nameWithoutOctave[0]] - 1 + octave*12
+}
+
+func IsDuration(word string) bool {
+	_, exists := durations[word]
+	return exists
 }
